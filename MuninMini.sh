@@ -1,12 +1,14 @@
 #!/bin/sh
 
 VERSION="0.9.5-Alpha"
-# NODENAME="WRT54GL.mossat"
+# NODENAME="host.domain"
 NODENAME="$(cat /proc/sys/kernel/hostname).$(cat /proc/sys/kernel/domainname)"
 
 #-> note: plugin files must be executable
-PLUGIN_DIR="/root/scripts/tomatoMunin/tomatoStats.d/"
-LOGFILE="/root/logs/tomatoMunin.log"
+PLUGIN_SUB_DIR="/plugins.d/"
+PLUGIN_DIR=$PWD/$(echo $0 | sed 's/\(^.*\/\)\(.*\)/\1/')$PLUGIN_SUB_DIR
+
+LOGFILE="/root/logs/MuninMini.log"
 
 USE_QUICK_LIST=1
 USE_MULTIGRAPH=1
