@@ -37,8 +37,8 @@ else
 	STD_OUT=$(echo "$DATA" | awk '
 		/inclusive/ { print gensub(/.*inclusive usage of ([0-9\.]{1,9}) GB.*/, "quota.value \\1", g)} 
 		/total usage/ { print gensub(/.*this month is ([0-9\.]{1,9}) GB.*/, "used.value \\1", g)} 
-		/total usage/ { print gensub(/.*([0-9]\.[0-9]{3}) GB \(.*/, "remaining.value \\1", g)}	
-		/booster/ { print gensub(/.*([0-9]\.[0-9]{3}).*/, "booster.value \\1", g)}
+		/total usage/ { print gensub(/.*>([0-9]{1,3}\.[0-9]{3}) GB \(.*/, "remaining.value \\1", g)}	
+		/booster/ { print gensub(/.*>([0-9]{1,3}\.[0-9]{3}) GB \(.*/, "booster.value \\1", g)}
 		')
 	if [ "$STD_OUT" = "" ]; then
 		echo "# ERROR: Response from server was blank, possibly unreachable."
