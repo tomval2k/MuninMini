@@ -8,7 +8,8 @@ NODENAME="$(cat /proc/sys/kernel/hostname).$(cat /proc/sys/kernel/domainname)"
 PLUGIN_SUB_DIR="/plugins.d/"
 PLUGIN_DIR=$PWD/$(echo $0 | sed 's/\(^.*\/\)\(.*\)/\1/')$PLUGIN_SUB_DIR
 
-LOGFILE="/root/logs/MuninMini.log"
+# LOGFILE="/root/logs/MuninMini.log"
+LOGFILE="/tmp/MuninMini.log"
 
 USE_QUICK_LIST=1
 USE_MULTIGRAPH=1
