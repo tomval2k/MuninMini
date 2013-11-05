@@ -4,9 +4,17 @@ VERSION="0.9.5-Alpha"
 # NODENAME="host.domain"
 NODENAME="$(cat /proc/sys/kernel/hostname).$(cat /proc/sys/kernel/domainname)"
 
+SPOOL_DIR="/tmp/munin-spool/"
+
 #-> note: plugin files must be executable
-PLUGIN_SUB_DIR="/plugins.d/"
-PLUGIN_DIR=$PWD/$(echo $0 | sed 's/\(^.*\/\)\(.*\)/\1/')$PLUGIN_SUB_DIR
+PLUGIN_SUB_DIR="plugins.d/"
+PLUGIN_DIR=$(echo $0 | sed 's/\(^.*\/\)\(.*\)/\1/')$PLUGIN_SUB_DIR
+
+#echo 1: PWD: $PWD
+#echo 2: \$0: $0
+#echo 3: $(cd ${0%/*} && echo $PWD/${0##*/})
+
+#echo $PLUGIN_DIR
 
 # LOGFILE="/root/logs/MuninMini.log"
 LOGFILE="/tmp/MuninMini.log"
@@ -18,6 +26,17 @@ USE_SPOOL=1
 
 #-> create arbitary declaration of time for munin to use as the timestamp when inserting into rrd database to prevent interpolation of integers
 EPOCH=$(expr $(date -u +%s) / 300 \* 300)
+
+
+#-> need to manage spool directory size, at 4kb a tarball, and one every 5 minutes, > 1mb per day
+emptySpool() {
+	MAXFILES=20
+
+#	ls /tmp/munin-spool/ -Alc | awk 'BEGIN {count=0; total=0} /tar.gz/ { count++; total=$5+total} END { print "total is " total "\ncount is "count }'
+#	ls $SPOOL_DIR -Alc | awk 'BEGIN {count=0; total=0} /.tar.gz$/ { count++; if(count > 20){ print $9 } }'
+	ls $SPOOL_DIR -Alc | awk 'BEGIN {count=0; total=0} /.tar.gz$/ { count++; if(count > '$MAXFILES'){ cmd="rm '$SPOOL_DIR'"$9; system(cmd)} }'
+}
+emptySpool
 
 #-> need to manage log file size, will only be trimmed once it is approx 1.5 times bigger than desired length
 trimfile() {
@@ -33,7 +52,6 @@ trimfile() {
 		sed -i '1,'$LINESTOGO'd' $LOGFILE
 	fi
 }
-
 trimfile $LOGFILE 150
 
 getPluginsQuick() {
@@ -115,7 +133,6 @@ createSpool(){
 
 	echo "# saving plugin output to spool"
 
-	SPOOL_DIR="/tmp/munin-spool/"
 	SPOOL_SUB_DIR=$SPOOL_DIR$NODENAME.$EPOCH
 	SPOOL_ARCHIVE=$SPOOL_DIR$NODENAME.$EPOCH.tar.gz
 	SPOOL_INDEX=$SPOOL_DIR/index.txt
