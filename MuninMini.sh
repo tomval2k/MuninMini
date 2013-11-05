@@ -32,9 +32,11 @@ EPOCH=$(expr $(date -u +%s) / 300 \* 300)
 emptySpool() {
 	MAXFILES=20
 
-#	ls /tmp/munin-spool/ -Alc | awk 'BEGIN {count=0; total=0} /tar.gz/ { count++; total=$5+total} END { print "total is " total "\ncount is "count }'
-#	ls $SPOOL_DIR -Alc | awk 'BEGIN {count=0; total=0} /.tar.gz$/ { count++; if(count > 20){ print $9 } }'
-	ls $SPOOL_DIR -Alc | awk 'BEGIN {count=0; total=0} /.tar.gz$/ { count++; if(count > '$MAXFILES'){ cmd="rm '$SPOOL_DIR'"$9; system(cmd)} }'
+	if [ -d $SPOOL_DIR ]; then
+#		ls /tmp/munin-spool/ -Alc | awk 'BEGIN {count=0; total=0} /tar.gz/ { count++; total=$5+total} END { print "total is " total "\ncount is "count }'
+#		ls $SPOOL_DIR -Alc | awk 'BEGIN {count=0; total=0} /.tar.gz$/ { count++; if(count > 20){ print $9 } }'
+		ls $SPOOL_DIR -Alc | awk 'BEGIN {count=0; total=0} /.tar.gz$/ { count++; if(count > '$MAXFILES'){ cmd="rm '$SPOOL_DIR'"$9; system(cmd)} }'
+	fi
 }
 emptySpool
 
