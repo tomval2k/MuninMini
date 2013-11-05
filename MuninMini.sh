@@ -21,6 +21,9 @@ EPOCH=$(expr $(date -u +%s) / 300 \* 300)
 
 #-> need to manage log file size, will only be trimmed once it is approx 1.5 times bigger than desired length
 trimfile() {
+	if [ ! -w $1 ]; then
+		return 1
+	fi
 	TRIGGERLENGTH=$(( $2 * 15 / 10 ))
 	LINECOUNT=$(awk 'END {print NR}' $1)
 	LINESTOGO=$(( $LINECOUNT - $2))
@@ -51,9 +54,9 @@ getPlugins() {
 	PLUGIN_LIST_FINAL=
 
 	if [ $USE_MULTIGRAPH = 1 ]; then
-		PLUGIN_LIST=$(ls -l $PLUGIN_DIR| awk '/.sh$/ && !/multi.sh$/ { n=gensub(/.sh$/, "", g, $9); printf n " "} ')
+		PLUGIN_LIST=$(ls -l $PLUGIN_DIR| awk '/.sh$/ && !/multi.sh$/ { n=gensub(/.sh$/, "", 1, $9); printf n " "} ')
 	else
-		PLUGIN_LIST=$(ls -l $PLUGIN_DIR| awk '/.sh$/ { n=gensub(/.sh$/, "", g, $9); printf n " "} ')
+		PLUGIN_LIST=$(ls -l $PLUGIN_DIR| awk '/.sh$/ { n=gensub(/.sh$/, "", 1, $9); printf n " "} ')
 	fi
 
 	PLUGIN_LIST_FINAL=$PLUGIN_LIST
@@ -189,7 +192,7 @@ listen(){
 				exit 0
 			;;
 			*)
-				printf "# Unrecognised input. Try one of: 'cap <ABILITY>' 'list' 'nodes' 'config <PLUGIN>' 'fetch <PLUGIN>' 'version' 'quit'\n"
+				printf "# Unrecognised input. Try one of: 'cap <ABILITY>' 'list' 'nodes' 'config <PLUGIN>' 'fetch <PLUGIN>' 'spool' 'version' 'quit'\n"
 				printf "# Current list: $PLUGIN_LIST_FINAL\n"
 				printf "# PID=$$. PPID=$PPID. USE_QUICK_LIST=$USE_QUICK_LIST. USE_MULTIGRAPH=$USE_MULTIGRAPH. USE_DIRTYCONFIG=$USE_DIRTYCONFIG. USE_SPOOL=$USE_SPOOL. EPOCH=$EPOCH\n"
 			;;
