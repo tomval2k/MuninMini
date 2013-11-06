@@ -1,6 +1,15 @@
 #!/bin/sh
 
-VERSION="0.9.5-Alpha"
+#-> allowing this script to read the spool *should* enable it to be ran by munin master
+#-> just have to watch out for different capabilities such as multigraph & dirtyconfig
+#-> perhaps use a settings files in the spool tarball to check that the capabilities of the master are matching what was sent to the node
+
+#	argX=$@
+#	if [ "$argX" == "getSpool" ]; then
+#		echo "# need to read values from the spool rather than get live data"
+#	fi	
+
+VERSION="0.9.6-Alpha"
 # NODENAME="host.domain"
 NODENAME="$(cat /proc/sys/kernel/hostname).$(cat /proc/sys/kernel/domainname)"
 
@@ -54,8 +63,6 @@ trimfile() {
 		sed -i '1,'$LINESTOGO'd' $LOGFILE
 	fi
 }
-trimfile $LOGFILE 150
-
 getPluginsQuick() {
 	PLUGIN_LIST="conntrack cpu interrupts irqstats load mem netstat processes quotaCheck uptime"
 	PLUGIN_LIST_MULTI="bw_multi conntrack cpu interrupts irqstats load mem netstat ping_multi processes quotaCheck uptime"
@@ -137,6 +144,7 @@ createSpool(){
 
 	SPOOL_SUB_DIR=$SPOOL_DIR$NODENAME.$EPOCH
 	SPOOL_ARCHIVE=$SPOOL_DIR$NODENAME.$EPOCH.tar.gz
+	SPOOL_ARCHIVE_LATEST=$SPOOL_DIR$NODENAME.latest.tar.gz
 	SPOOL_INDEX=$SPOOL_DIR/index.txt
 	SPOOL_MD5=
 
@@ -163,6 +171,11 @@ createSpool(){
 	echo "# $NODENAME.$EPOCH, $(date +%D.%T), archived, $SPOOL_MD5...plugin output saved...see $SPOOL_ARCHIVE"
 
 	trimfile $SPOOL_INDEX 150
+
+#-> either do something with the archive within this script like upload it somewhere, or make it really easy to find for something else
+#	cp $SPOOL_ARCHIVE $SPOOL_ARCHIVE_LATEST
+	rm $SPOOL_ARCHIVE_LATEST
+	ln -s $SPOOL_ARCHIVE $SPOOL_ARCHIVE_LATEST
 }
 
 listen(){
