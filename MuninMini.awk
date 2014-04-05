@@ -86,10 +86,22 @@ $1 == "nodes"	{
 }
 
 $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
+#-> as can not create a 2-way pipe on router, need to automatically loop through plugins, hence why this in same block
+
 	if ( $1 == "spool-save" ){
-#-> 	at minimum need a 'list', 'cap ...' is optional as spool-save shouldn't be called by something that doesn't know command
-#-> 	as can not create a 2-way pipe on router, need to automatically loop through extensions, hence why this in same block
-#-> 	...other option was to have this script call itself with a known list...but do not like that idea
+#-> 	at minimum need a 'list', and 'cap dirtyconfig...'
+		if ( USE_DIRTYCONFIG != 0 ) {
+#->			Even more complicated if you are spooling data twice (e.g. once to get config + once to get values)
+#->			Does data then get stored separetly...etc, so easy option is to force dirtyconfig.
+			print "# Error. Must have dirtyconfig set to use spool-save.";
+			next;
+		}
+		else if ( length(pluginStr) == 0 ) {
+			print "# Error. Musst have ran 'list' prior to 'spool-save'.";
+			next;
+		}
+		
+		cmdSuffix = " graph data";
 #-> 	create directory...
 		TMPDIR = SPOOLDIR NODENAME "." EPOCH;
 
@@ -100,15 +112,6 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 		}
 #		print "# Notice. Temporary directory created: " TMPDIR;
 
-		if ( USE_DIRTYCONFIG == 0 ) {
-			cmdSuffix = " graph data";
-		}
-		else {
-#->			Even more complicated if you are spooling data twice (e.g. once to get config + once to get values)
-#->			Does data then get stored separetly...etc, so easy option is to force dirtyconfig.
-			print "# Error. Must have dirtyconfig set to use spool-save.";
-			next;
-		}
 	}
 	else if ( $1 == "fetch" ){
 		cmdSuffix = " data"
