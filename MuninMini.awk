@@ -7,7 +7,11 @@ BEGIN {
 	USE_MULTIGRAPH = 1
 	USE_DIRTYCONFIG = 1
 	SPOOLDIR = "/tmp/munin-awk/spool/";
-	EPOCH = systime();
+#-> gawk->mawk edit
+#	EPOCH = systime();
+	cmd = "date +%s";
+	cmd | getline EPOCH;
+	close(cmd);
 	EPOCH = EPOCH - (EPOCH % 300)
 
 	PLUGIN_DIR="plugins.d/"
@@ -24,6 +28,8 @@ BEGIN {
 	}
 	else { HOST = "host" }
 	NODENAME = HOST "." DOMAIN;
+#->TODO, fix invalid characters of '(none)' as this is part of filename
+	NODENAME = "test.domain";
 	print "# munin node at " NODENAME;
 }
 
@@ -55,7 +61,12 @@ $1 == "list"	{
 	cmd = "ls " PLUGIN_DIR
 	while( cmd | getline line > 0 ) {
 #		print line
-		basename = gensub( /(.*)\..*/, "\\1", 1, line);
+#-> gawk->mawk edit
+#		basename = gensub( /(.*)\..*/, "\\1", 1, line);
+		match(line, /^.*\./);
+		basename = substr(line, 1, RLENGTH-1);
+#		print "line: " line;
+#		print "base: " basename;
 
 #-> don't add multigraph
 		isMulti = match(basename, /multi$/);
@@ -97,10 +108,10 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 			next;
 		}
 		else if ( length(pluginStr) == 0 ) {
-			print "# Error. Musst have ran 'list' prior to 'spool-save'.";
+			print "# Error. Must have ran 'list' prior to 'spool-save'.";
 			next;
 		}
-		
+
 		cmdSuffix = " graph data";
 #-> 	create directory...
 		TMPDIR = SPOOLDIR NODENAME "." EPOCH;
@@ -187,9 +198,11 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 			close(TMPDIR "/" filename ".txt");
 		}
 		close(cmd);
+#-> gawk-> mawk fix, plus deleting each element of array when it is used is maybe better
+	delete pluginsToGet[p];
 	}
 ###########################################################
-	delete pluginsToGet;
+#	delete pluginsToGet;
 	LABEL = NODENAME "." EPOCH;
 
 	if ( $1 != "spool-save" ){
@@ -219,7 +232,12 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 		MD5 = line;
 	}
 	close(cmd);
-	TIMESTAMP = strftime("%d/%m/%Y %H:%M:%S %z");
+#-> gawk->mawk edit
+#	TIMESTAMP = strftime("%d/%m/%Y %H:%M:%S %z");
+	cmd = "date +'%d/%m/%Y %H:%M:%S %z'";
+	cmd | getline TIMESTAMP;
+	close(cmd);
+
 	logLine = LABEL ", " TIMESTAMP ", archived, " MD5;
 
 	print logLine >> SPOOLDIR "index.txt";
@@ -231,7 +249,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 #		exit;
 	}
 	close(cmd);
-	print "# Output from plugins has been saved.";
+	print "# Output from plugins has been saved. [ " SPOOLDIR LABEL ".tar.gz ]";
 	next;
 }
 
