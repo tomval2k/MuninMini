@@ -11,7 +11,7 @@ BEGIN {
 	EPOCH = EPOCH - (EPOCH % 300)
 
 	PLUGIN_DIR="plugins.d/"
-	
+
 
 	if ((getline < "/proc/sys/kernel/domainname" tmp) > 0){
 		DOMAIN = $RS;
@@ -55,7 +55,7 @@ $1 == "list"	{
 	cmd = "ls " PLUGIN_DIR
 	while( cmd | getline line > 0 ) {
 #		print line
-		basename = gensub(		/(.*)\..*/, "\\1", g, line);
+		basename = gensub( /(.*)\..*/, "\\1", 1, line);
 
 #-> don't add multigraph
 		isMulti = match(basename, /multi$/);
