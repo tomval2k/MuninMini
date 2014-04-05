@@ -95,11 +95,11 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 
 		result = system("mkdir -p " TMPDIR);
 		if ( result != 0 ){
-			print "# Error. Can not create temporary directory: " TMPDIR
+			print "# Error. Can not create temporary directory: " TMPDIR;
 			exit;
 		}
-#		print "# Notice. Temporary directory created: " TMPDIR	
-		
+#		print "# Notice. Temporary directory created: " TMPDIR;
+
 		if ( USE_DIRTYCONFIG == 0 ) {
 			cmdSuffix = " graph data";
 		}
@@ -123,13 +123,13 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 		print "# Error. Unrecognised options...but really not sure how this message would be shown.";
 		next;
 	}
-	
+
 
 #-> if manual, or from two-way munin-master -> munin-node, 'cmd' gets run once,
 #-> if spooling, cmd will loop...
 
 #-> reset array when this is called multiple times, (e.g. fetch cpu...fetch uptime...fetch netstat..etc)
-	pluginsToGet = split("", pluginsToGet);
+#	pluginsToGet = split("", pluginsToGet);
 
 	if ( $1 == "spool-save" ){
 		for (x in pluginArr) {
@@ -147,7 +147,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 		exit;
 	}
 
-###########################################################	
+###########################################################
 	for (p in pluginsToGet){
 #		print "plugin is...:" p;
 		filename = pluginArr[p];
@@ -185,8 +185,8 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 		}
 		close(cmd);
 	}
-###########################################################	
-
+###########################################################
+	delete pluginsToGet;
 	LABEL = NODENAME "." EPOCH;
 
 	if ( $1 != "spool-save" ){
@@ -197,7 +197,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 #	print cmd;
 	if (system(cmd) != 0) {
 		print "# Error. Could not create *.tar.gz.";
-#		exit;	
+#		exit;
 	}
 	close(cmd);
 
@@ -205,7 +205,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 #	print cmd;
 	if (system(cmd) !=0) {
 		print "# Error. Could not remove temporary directory.";
-#		exit;	
+#		exit;
 	}
 	close(cmd);
 
