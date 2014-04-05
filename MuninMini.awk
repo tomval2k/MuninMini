@@ -45,7 +45,7 @@ $1 == "cap"	{
 			print "# Error: other capabilities may still have been set.";
 		}
 	}
-	break;
+	next;
 	}
 $1 == "list"	{
 #-> if there is more than one file in plug directory with common basename,
@@ -77,12 +77,12 @@ $1 == "list"	{
 #-> remove leading spaces from string
 	gsub(/^ */, "", pluginStr);
 	print pluginStr;
-	break;
+	next;
 }
 
 $1 == "nodes"	{
 	print NODENAME "\n.";
-	break;
+	next;
 }
 
 $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
@@ -107,7 +107,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 #->			Even more complicated if you are spooling data twice (e.g. once to get config + once to get values)
 #->			Does data then get stored separetly...etc, so easy option is to force dirtyconfig.
 			print "# Error. Must have dirtyconfig set to use spool-save.";
-			break;
+			next;
 		}
 	}
 	else if ( $1 == "fetch" ){
@@ -121,7 +121,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 	}
 	else {
 		print "# Error. Unrecognised options...but really not sure how this message would be shown.";
-		break;
+		next;
 	}
 	
 
@@ -191,7 +191,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 
 	if ( $1 != "spool-save" ){
 		print ".";
-		break;
+		next;
 	}
 	cmd = "tar -cz -C " SPOOLDIR " -f " SPOOLDIR LABEL ".tar.gz " NODENAME "." EPOCH;
 #	print cmd;
@@ -229,19 +229,19 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 	}
 	close(cmd);
 	print "# Output from plugins has been saved.";
-	break;
+	next;
 }
 
 $1 == "easter"	{
 	print "# Kudos. You read the source."
-	break;
+	next;
 }
 
 $1 == "version"	{
 	print "# Version " VERSION
 	print "# Munin-node written for router with Tomato firmware."
 	print "# Should be compatible with other devices."
-	break
+	next;
 }
 
 $1 == "quit"	{
