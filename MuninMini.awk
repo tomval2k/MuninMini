@@ -1,9 +1,9 @@
 #!/usr/bin/awk -f
 
-#-> munin in shell is one thing...now in awk/gawk?
+#-> munin in shell is one thing...now in awk/gawk/mawk
 
 BEGIN {
-	VERSION = "0.10.1"
+	VERSION = "0.10.2"
 	USE_MULTIGRAPH = 1
 	USE_DIRTYCONFIG = 1
 	SPOOLDIR = "/tmp/munin-awk/spool/";

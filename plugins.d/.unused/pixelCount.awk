@@ -1,10 +1,5 @@
 #!/usr/bin/awk -f
 
-#-> script will either receive:
-#->  <scriptname> data
-#->  <scriptname> graph
-#->  <scriptname> graph data
-
 
 BEGIN {
 
