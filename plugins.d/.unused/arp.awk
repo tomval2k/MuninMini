@@ -39,8 +39,9 @@ BEGIN {
 
 	if( ( ARGV[1] == "data" ) || (( ARGV[1] == "graph" ) && ( ARGV[2] == "data" ))) {
 		if (count > 1){
-			print "br0.value " device["br0"];
-			print "vlan1.value " device["vlan1"];
+			for (dev in device){
+				printf ("%s.value %d\n", dev, device[dev]);
+			}
 			print "arp.value " count - 1;
 		}
 		else {
