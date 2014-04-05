@@ -3,7 +3,7 @@
 #-> munin in shell is one thing...now in awk/gawk?
 
 BEGIN {
-	VERSION = "0.9.15"
+	VERSION = "0.10.1"
 	USE_MULTIGRAPH = 1
 	USE_DIRTYCONFIG = 1
 	SPOOLDIR = "/tmp/munin-awk/spool/";
@@ -86,7 +86,7 @@ $1 == "list"	{
 		pluginStr = pluginStr " " x;
 	}
 #-> remove leading spaces from string
-	gsub(/^ */, "", pluginStr);
+	gsub(/^ +/, "", pluginStr);
 	print pluginStr;
 	next;
 }
@@ -163,7 +163,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 
 ###########################################################
 	for (p in pluginsToGet){
-#		print "plugin is...:" p;
+		print "# Info plugin is: " p;
 		filename = pluginArr[p];
 		if ( length(filename) == 0 ){
 			print "# Plugin not found. Was it in 'list'?";
