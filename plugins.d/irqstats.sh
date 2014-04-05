@@ -7,8 +7,6 @@ graph_vlabel interrupts
 graph_category system"
 
 	awk '/[0-9]+:/ {
-	#	i=gensub(/:/, "", "g", $1);
-	#	print "i" i ".label " $4 "\ni" i ".info Interrupt " i ", for device(s): " $4 "\ni" i ".min 0\ni" i ".type DERIVE"
 		gsub(/:/, "", $1);
 		print "i" $1 ".label " $4 "\ni" $1 ".info Interrupt " $1 ", for device(s): " $4 "\ni" $1 ".min 0\ni" $1 ".type DERIVE"
 	}
