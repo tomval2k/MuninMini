@@ -9,7 +9,10 @@
 #		echo "# need to read values from the spool rather than get live data"
 #	fi	
 
-VERSION="0.9.6-Alpha"
+#-> April 2014
+#->  - want to speed up the script, allow -any- script to be run, e.g. .awk & .sh
+
+VERSION="0.9.7-Alpha"
 # NODENAME="host.domain"
 NODENAME="$(cat /proc/sys/kernel/hostname).$(cat /proc/sys/kernel/domainname)"
 
@@ -80,6 +83,9 @@ getPlugins() {
 	PLUGIN_LIST=
 	PLUGIN_LIST_FINAL=
 
+#-> problem: want to be able to use plugins with any extension, but don't want to create conflicts due to
+#->  scripts having same basenames...which they should not...but theoretically could
+#-> also would need to map the request from munin master for say, 'fetch uptime' to 'fetch uptime.sh' or 'fetch uptime.awk'
 	if [ $USE_MULTIGRAPH = 1 ]; then
 		PLUGIN_LIST=$(ls -l $PLUGIN_DIR| awk '/.sh$/ && !/multi.sh$/ { n=gensub(/.sh$/, "", 1, $9); printf n " "} ')
 	else
