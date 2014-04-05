@@ -52,7 +52,7 @@ BEGIN {
 
 #->INSTALL INFO START<-#
 #->VERSION:1.0.0
-#->DESCRIPTION:Reports number of IP addresses in from /proc/net/arp, and groups per device (i.e. 'br0', 'vlan1').
+#->DESCRIPTION:Reports number of IP addresses listed in '/proc/net/arp', and groups per device (i.e. 'br0', 'vlan1').
 #->REQUIREMENTS:FILE:/proc/net/arp
 #->DIRTYCONFIG:TRUE
 #->MULTIGRAPH:FALSE
