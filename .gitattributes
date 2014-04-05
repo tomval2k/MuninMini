@@ -1,2 +1,15 @@
-# force correct line endings
-text eol=lf
+﻿# line ending madness!
+
+# this lets git autodetect text files and do stuff automatically
+# * text=auto
+
+# the following are definetly text files, which are being forced to LF
+*.txt text eol=LF
+*.c text eol=LF
+*.h text eol=LF
+*.sh text eol=LF
+*.awk text eol=LF
+
+# do not change binary files
+*.jpg binary
+*.data binary
