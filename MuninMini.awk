@@ -26,6 +26,9 @@ BEGIN {
 		}
 	}
 
+#-> force trailing slash on directories
+	sub(/[^\/]$/, "&/", PLUGINDIR);
+	sub(/[^\/]$/, "&/", SPOOLDIR);
 #-> other values (changed in response to munin server input)
 	USE_MULTIGRAPH = 1
 	USE_DIRTYCONFIG = 1
@@ -221,7 +224,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 			break;
 		}
 #				print "# Notice. Plugin was found..." filename;
-		cmd = "./" PLUGINDIR filename cmdSuffix;
+		cmd = PLUGINDIR filename cmdSuffix;
 	#	print cmd;
 	#	system(cmd)
 
