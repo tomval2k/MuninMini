@@ -107,16 +107,17 @@ $1 == "nodes"	{
 $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 #-> as can not create a 2-way pipe on router, need to automatically loop through plugins, hence why this in same block
 
+	if ( length(pluginStr) == 0 ) {
+		print "# Error. Must have ran 'list' prior to 'fetch <plugin>', 'config <plugin>', or 'spool-save'.";
+		next;
+	}
+
 	if ( $1 == "spool-save" ){
 #-> 	at minimum need a 'list', and 'cap dirtyconfig...'
 		if ( USE_DIRTYCONFIG != 0 ) {
 #->			Even more complicated if you are spooling data twice (e.g. once to get config + once to get values)
 #->			Does data then get stored separetly...etc, so easy option is to force dirtyconfig.
-			print "# Error. Must have dirtyconfig set to use spool-save.";
-			next;
-		}
-		else if ( length(pluginStr) == 0 ) {
-			print "# Error. Must have ran 'list' prior to 'spool-save'.";
+			print "# Error. Must have ran 'cap dirtyconfig' to use 'spool-save'.";
 			next;
 		}
 
@@ -164,14 +165,18 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 		pluginsToGet[$2]++;
 #		print "option 2";
 	}
+	else if ( length(pluginArr[$2]) == 0 ) {
+		print "# Error. Supplied plugin of " $2 " not in list.";
+	}
 	else {
 		print "# Error. Something has gone wrong. Not sure how.";
 		exit;
 	}
-
 ###########################################################
 	for (p in pluginsToGet){
-#		print "# Info plugin is: " p;
+#		if ( $1 == "spool-save" ){
+#			print "# Info plugin is: " p;
+#		}
 		filename = pluginArr[p];
 		if ( length(filename) == 0 ){
 			print "# Plugin not found. Was it in 'list'?";
@@ -257,7 +262,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 #		exit;
 	}
 	close(cmd);
-	print "# Output from plugins has been saved. [ " SPOOLDIR LABEL ".tar.gz ]";
+	print "# Plugin responses spooled to: " SPOOLDIR LABEL ".tar.gz";
 	next;
 }
 
