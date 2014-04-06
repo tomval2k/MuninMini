@@ -66,13 +66,19 @@ $1 == "list"	{
 #-> e.g. uptime.awk and uptime.sh, only uptime.sh is listed
 #-> in theory, it is possible to check if the basename already exists and give it a suffix
 #	print "listing all files in: " PLUGIN_DIR;
-	cmd = "ls " PLUGIN_DIR
+	cmd = "ls -l " PLUGIN_DIR
 	while( cmd | getline line > 0 ) {
 #		print line
-#-> gawk->mawk edit
-#		basename = gensub( /(.*)\..*/, "\\1", 1, line);
-		match(line, /^.*\./);
-		basename = substr(line, 1, RLENGTH-1);
+		split(line, parts)
+#-> check if file is executable (very basic, no owner checks etc)
+		if (parts[1] !~ /^-rwx/ ) {
+#			print "not executable" parts[1] " ... " parts[9];
+			continue;
+		}
+		fullname = parts[9];
+#-> match() will set inbuilt variable RLENGTH
+		match(fullname, /^.*\./);
+		basename = substr(fullname, 1, RLENGTH-1);
 #		print "line: " line;
 #		print "base: " basename;
 
@@ -81,7 +87,7 @@ $1 == "list"	{
 		if (( USE_MULTIGRAPH == 1 ) && (isMulti > 0)){
 			continue;
 		}
-		pluginArr[basename] = line;
+		pluginArr[basename] = fullname;
 	}
 	close(cmd)
 
