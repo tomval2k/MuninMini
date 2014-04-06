@@ -172,7 +172,9 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 #		print "option 2";
 	}
 	else if ( length(pluginArr[$2]) == 0 ) {
-		print "# Error. Supplied plugin of " $2 " not in list.";
+		print "# Error. Supplied plugin of '" $2 "' not in list.";
+		delete pluginArr[$2];
+		next;
 	}
 	else {
 		print "# Error. Something has gone wrong. Not sure how.";
@@ -186,6 +188,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 		filename = pluginArr[p];
 		if ( length(filename) == 0 ){
 			print "# Plugin not found. Was it in 'list'?";
+			print "# looking for: " filename " ... " p;
 			break;
 		}
 #				print "# Notice. Plugin was found..." filename;
