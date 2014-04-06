@@ -3,7 +3,7 @@
 #-> munin in shell is one thing...now in awk/gawk/mawk
 
 BEGIN {
-	VERSION = "0.10.2"
+	VERSION = "0.10.3"
 	USE_MULTIGRAPH = 1
 	USE_DIRTYCONFIG = 1
 	SPOOLDIR = "/tmp/munin-awk/spool/";
@@ -28,8 +28,8 @@ BEGIN {
 	}
 	else { HOST = "host" }
 	NODENAME = HOST "." DOMAIN;
-#->TODO, fix invalid characters of '(none)' as this is part of filename
-	NODENAME = "test.domain";
+#-> '/proc/sys/kernel/domainname' may return '(none)', which is fine until attempting to write to a filesystem
+	gsub(/[()]/, "", NODENAME);
 	print "# munin node at " NODENAME;
 }
 
@@ -163,7 +163,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 
 ###########################################################
 	for (p in pluginsToGet){
-		print "# Info plugin is: " p;
+#		print "# Info plugin is: " p;
 		filename = pluginArr[p];
 		if ( length(filename) == 0 ){
 			print "# Plugin not found. Was it in 'list'?";

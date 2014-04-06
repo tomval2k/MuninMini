@@ -1,5 +1,5 @@
-﻿# this lets git autodetect text files and do stuff automatically
-# * text=auto
+# this lets git autodetect text files and do stuff automatically
+* text=auto
 
 # the following are definetly text files, which are being forced to LF
 *.txt text eol=LF
