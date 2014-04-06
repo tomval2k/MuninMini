@@ -6,26 +6,26 @@ Todo list:
 
     PLUGINS:
         - rewrite some plugins
-			- repeated calls for graph + data to same datasource in:
-				irqstats.sh
-				if_multi.sh
-			- multiple redirections from shell to sub processes
-				bw_multi.sh
-			- change default ping test server
-				ping_multi.sh
-			
+            - repeated calls for graph + data to same datasource in:
+                irqstats.sh
+                if_multi.sh
+            - multiple redirections from shell to sub processes
+                bw_multi.sh
+            - change default ping test server
+                ping_multi.sh
+            
         - quota plugins to be combined
         - some new plugins?
             - want a plugin that draws a curve on the graph -perhaps sin/cos/tan from awk? ('cos it will look nice)
         - check how plugins should report errors to munin
         - plugin installation script
-			- could read variables from scripts, summarise, and install based on preferences
-			- needs to be able to run unattended
+            - could read variables from scripts, summarise, and install based on preferences
+            - needs to be able to run unattended
 
     MISC:
         - update readme
-            - duplicate basename - only one script gets used
-			- can pass arguments via commandline
+DONE        - duplicate basename - only one script gets used
+DONE        - can pass arguments via commandline
         - spool directory management
 
 

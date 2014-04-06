@@ -11,8 +11,9 @@ Basic installation of files to enable running MuninMini.sh from a shell:
 
     wget https://codeload.github.com/tomval2k/MuninMini/tar.gz/master -O /tmp/MuninMini.tar.gz
     tar -xzv -f /tmp/MuninMini.tar.gz -C /tmp
-    mkdir -p /root/scripts/
-    mv /tmp/MuninMini-master/ /root/scripts/MuninMini/
+    mkdir -p /root/scripts/MuninMini/
+    cp -r /tmp/MuninMini-master/* /root/scripts/MuninMini/
+	rm -r /tmp/MuninMini-master
     rm /tmp/MuninMini.tar.gz
 
 Then need to done one or more of the following:
@@ -22,6 +23,28 @@ Then need to done one or more of the following:
   - create and monitor a SSH tunnel from a munin-master to this node
 
 
+Command-line options
+====================
+
+The following can be passed to the node on the command-line, overwriting the defaults:
+    'plugins.d=/path/to/plugins'
+		This is to ensure the node can always find the plugin directory.
+    'spool.d=/path/to/chosen/spool/location/'
+		Choose where to store spooled archives of plugin output.
+    'node=custom.nodename'
+		Specify a chosen nodename.
+
+
+Plugins
+=======
+
+Plugins are stored in 'plugins.d', and unused plugins are stored in 'plugins.d/.unused/'. They can be stored elsewhere, with the location being passed to the node via the command-line.
+
+The node searches the plugin directory in response to the 'list' command. Plugins are checked to see if they are executable, and should two plugins have the same basename only one will be included in the loaded list.
+
+Additionally, plugins with a name such as 'ping_multi.sh', therefore having a basename ending in '_multi', will not be included unless 'cap multigraph' is sent to the node.
+
+		
 Features and compatibility
 ==========================
 
