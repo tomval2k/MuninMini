@@ -61,8 +61,12 @@ BEGIN {
 		}
 	}
 
-#-> remove blacklist of characters from NODENAME
+#-> remove blacklist of characters from NODENAME, and warn if NODENAME length is now zero.
 	gsub(/[()]/, "", NODENAME);
+	if(length(NODENAME) == 0){
+		print "# Error. No usable nodename defined in system or passed with commandline.";
+		exit;
+	}
 	print "# munin node at " NODENAME;
 }
 
