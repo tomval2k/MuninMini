@@ -60,8 +60,8 @@ Originally, MuninMini was written as a shell script. This worked fine, but perfo
 
 As awk was getting used a lot to do text processing, it was logical to rewrite the script into one awk script. Then anything awk itself could not handle could be outsorced using a system/getline call.
 
-Some of the performance gains have been negated due to making the awk script compatible with multiple variances of awk:
-  - busybox-awk v1..14.4
+Some of the performance gains have been negated due to making the awk script compatible with variances of awk and has been tested on:
+  - busybox-awk v1.10.2, v1.14.4, v1.19.4
   - GNU Awk 4.0.1
   - mawk 1.3.3 Nov 1996 (yes, this even works on something from the last millennium)
 
