@@ -1,15 +1,23 @@
 Todo list:
 
-- reimplement logging into awk script (was limited logging in shell version)
-- spool directory management
-- plugin installation script
-- rewrite some plugins
-	- quota plugins to be combined
+    NODE:
+        - reimplement logging into awk script (was limited logging in shell version)
+        - add timeouts to awk script
 
-- some new plugins?
-	- want a plugin that draws a curve on the graph -perhaps sin/cos/tan from awk? ('cos it will look nice)
+    PLUGINS:
+        - rewrite some plugins
+        - quota plugins to be combined
+        - some new plugins?
+            - want a plugin that draws a curve on the graph -perhaps sin/cos/tan from awk? ('cos it will look nice)
+        - check how plugins should report errors to munin
+        - plugin installation script
+			- could read variables from scripts, summarise, and install based on preferences
+			- needs to be able to run unattended
 
-- update readme
-	- duplicate basename - only one script gets used
-- check it still works
-- check how plugins should report errors to munin
+    MISC:
+        - update readme
+            - duplicate basename - only one script gets used
+        - spool directory management
+
+
+    - check it still works
