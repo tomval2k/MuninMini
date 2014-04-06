@@ -25,6 +25,7 @@ Todo list:
     MISC:
         - update readme
             - duplicate basename - only one script gets used
+			- can pass arguments via commandline
         - spool directory management
 
 
