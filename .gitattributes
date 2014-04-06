@@ -1,12 +1,12 @@
 # this lets git autodetect text files and do stuff automatically
 * text=auto
 
-# the following are definetly text files, which are being forced to LF
-*.txt text eol=LF
-*.c text eol=LF
-*.h text eol=LF
-*.sh text eol=LF
-*.awk text eol=LF
+# the following are definetly text files, which are being forced to lf, except .txt
+*.txt text eol=crlf
+*.c text eol=lf
+*.h text eol=lf
+*.sh text eol=lf
+*.awk text eol=lf
 
 # do not change binary files
 *.jpg binary
