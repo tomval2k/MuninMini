@@ -21,14 +21,22 @@ BEGIN {
 		DOMAIN = $RS;
 		close(tmp);
 	}
-	else { DOMAIN = "domain" }
+	else { DOMAIN = "domain"; }
 	if ((getline < "/proc/sys/kernel/hostname" tmp) > 0){
 		HOST = $RS;
 		close(tmp);
 	}
-	else { HOST = "host" }
-	NODENAME = HOST "." DOMAIN;
+	else { HOST = "host"; }
+
 #-> '/proc/sys/kernel/domainname' may return '(none)', which is fine until attempting to write to a filesystem
+#-> so if there is some form of hostname, ignore the domainname if it is '(none)'
+#-> all use gsub to remove any '()' from final NODENAME
+	if (( DOMAIN == "(none)" ) && ( length(HOST) > 0 )){
+		NODENAME = HOST;
+	}
+	else {
+		NODENAME = HOST "." DOMAIN;
+	}
 	gsub(/[()]/, "", NODENAME);
 	print "# munin node at " NODENAME;
 }
