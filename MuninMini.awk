@@ -3,40 +3,65 @@
 #-> munin in shell is one thing...now in awk/gawk/mawk
 
 BEGIN {
-	VERSION = "0.10.3"
+	VERSION = "0.11.0"
+
+#-> default values that can be changed by passing arguments via command line
+	SPOOLDIR	= "/tmp/munin-awk/spool/";
+	PLUGINDIR	= "plugins.d/"
+	NODENAME	= ""
+
+#-> read any supplied values from command line
+	for (i in ARGV){
+		if (ARGV[i] ~ /^plugins.d=/ ) {
+			PLUGINDIR = ARGV[i];
+			gsub(/^.*=/, "", PLUGINDIR);
+		}
+		else if (ARGV[i] ~ /^spool.d=/ ) {
+			SPOOLDIR = ARGV[i];
+			gsub(/^.*=/, "", SPOOLDIR);
+		}
+		else if (ARGV[i] ~ /^node=/ ) {
+			NODENAME = ARGV[i];
+			gsub(/^.*=/, "", NODENAME);
+		}
+	}
+
+#-> other values (changed in response to munin server input)
 	USE_MULTIGRAPH = 1
 	USE_DIRTYCONFIG = 1
-	SPOOLDIR = "/tmp/munin-awk/spool/";
-#-> gawk->mawk edit
+#-> gawk->mawk edit (mawk does not have systime() function)
 #	EPOCH = systime();
 	cmd = "date +%s";
 	cmd | getline EPOCH;
 	close(cmd);
 	EPOCH = EPOCH - (EPOCH % 300)
 
-	PLUGIN_DIR="plugins.d/"
+#-> if no NODENAME defined, get one from system values
 
+	if(NODENAME == ""){
+		if ((getline < "/proc/sys/kernel/domainname" tmp) > 0){
+			DOMAIN = $RS;
+			close(tmp);
+		}
+		else { DOMAIN = "domain"; }
+		if ((getline < "/proc/sys/kernel/hostname" tmp) > 0){
+			HOST = $RS;
+			close(tmp);
+		}
+		else { HOST = "host"; }
 
-	if ((getline < "/proc/sys/kernel/domainname" tmp) > 0){
-		DOMAIN = $RS;
-		close(tmp);
+	#-> '/proc/sys/kernel/domainname' may return '(none)', which is fine until attempting to write to a filesystem
+	#-> so if there is some form of hostname, ignore the domainname if it is '(none)'
+	#-> all use gsub to remove any '()' from final NODENAME
+		if (( DOMAIN == "(none)" ) && ( length(HOST) > 0 )){
+			NODENAME = HOST;
+		}
+		else {
+			NODENAME = HOST "." DOMAIN;
+		}
 	}
-	else { DOMAIN = "domain"; }
-	if ((getline < "/proc/sys/kernel/hostname" tmp) > 0){
-		HOST = $RS;
-		close(tmp);
-	}
-	else { HOST = "host"; }
 
-#-> '/proc/sys/kernel/domainname' may return '(none)', which is fine until attempting to write to a filesystem
-#-> so if there is some form of hostname, ignore the domainname if it is '(none)'
-#-> all use gsub to remove any '()' from final NODENAME
-	if (( DOMAIN == "(none)" ) && ( length(HOST) > 0 )){
-		NODENAME = HOST;
-	}
-	else {
-		NODENAME = HOST "." DOMAIN;
-	}
+#-> remove blacklist of characters from NODENAME
 	gsub(/[()]/, "", NODENAME);
 	print "# munin node at " NODENAME;
 }
@@ -65,8 +90,8 @@ $1 == "list"	{
 #-> if there is more than one file in plug directory with common basename,
 #-> e.g. uptime.awk and uptime.sh, only uptime.sh is listed
 #-> in theory, it is possible to check if the basename already exists and give it a suffix
-#	print "listing all files in: " PLUGIN_DIR;
-	cmd = "ls -l " PLUGIN_DIR
+#	print "listing all files in: " PLUGINDIR;
+	cmd = "ls -l " PLUGINDIR
 	while( cmd | getline line > 0 ) {
 #		print line
 		split(line, parts)
@@ -192,7 +217,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 			break;
 		}
 #				print "# Notice. Plugin was found..." filename;
-		cmd = "./" PLUGIN_DIR filename cmdSuffix;
+		cmd = "./" PLUGINDIR filename cmdSuffix;
 	#	print cmd;
 	#	system(cmd)
 
