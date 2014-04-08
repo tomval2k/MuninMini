@@ -228,6 +228,9 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 	#	print cmd;
 	#	system(cmd)
 
+		if ( $1 == "spool-save" ){
+			print "#SPOOL-BEGIN:" p > TMPDIR "/" filename ".txt";
+		}
 		while( cmd | getline line > 0 ) {
 	#-> 	if part 1 ends .value AND part 2 does NOT contain data-COLON-data, then add epoch
 	#-> 	perhaps also have a test to ensure that tempArr is only 2 elements long?
@@ -249,6 +252,7 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 			}
 		}
 		if ( $1 == "spool-save" ){
+			print "#SPOOL-END:" p > TMPDIR "/" filename ".txt";
 			close(TMPDIR "/" filename ".txt");
 		}
 		close(cmd);
@@ -292,9 +296,9 @@ $1 == "fetch" || $1=="config" || $1 == "spool-save"	{
 	cmd | getline TIMESTAMP;
 	close(cmd);
 
-	logLine = LABEL ", " TIMESTAMP ", archived, " MD5;
+	logLine = NODENAME ", " EPOCH ", " TIMESTAMP ", archived, " MD5;
 
-	print logLine >> SPOOLDIR "index.txt";
+	print logLine >> SPOOLDIR NODENAME ".index.txt";
 
 	cmd = "ln -sf " SPOOLDIR LABEL ".tar.gz" " " SPOOLDIR NODENAME ".latest.tar.gz" ;
 #	print cmd;
